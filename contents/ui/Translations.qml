@@ -42,7 +42,8 @@ QtObject {
             "Widget Settings": "Widget Settings",
             "%1 monitor enabled": "%1 monitor enabled",
             "%1 monitors enabled": "%1 monitors enabled",
-            "Show monitor count badge": "Show monitor count badge"
+            "Show monitor count badge": "Show monitor count badge",
+            "Expand for better view": "Expand for better view"
         },
         "hu_HU": {
             "Quick Display Change": "Gyors kijelzőváltó",
@@ -70,7 +71,8 @@ QtObject {
             "Widget Settings": "Widget beállítások",
             "%1 monitor enabled": "%1 monitor bekapcsolva",
             "%1 monitors enabled": "%1 monitor bekapcsolva",
-            "Show monitor count badge": "Monitor számláló jelvény megjelenítése"
+            "Show monitor count badge": "Monitor számláló jelvény megjelenítése",
+            "Expand for better view": "Húzd nagyobbra a jobb nézetért"
         },
         "de_DE": {
             "Quick Display Change": "Schneller Anzeigewechsel",

@@ -17,13 +17,13 @@ PlasmaExtras.Representation {
     // Reference to layout editor (loaded via Loader)
     property var layoutEditor: layoutEditorLoader.item
 
-    // Fixed size - large enough for everything including vertical monitor arrangements
-    Layout.minimumWidth: Kirigami.Units.gridUnit * 26
-    Layout.minimumHeight: Kirigami.Units.gridUnit * 36
-    Layout.preferredWidth: Kirigami.Units.gridUnit * 30
-    Layout.preferredHeight: Kirigami.Units.gridUnit * 42
-    Layout.maximumWidth: Kirigami.Units.gridUnit * 35
-    Layout.maximumHeight: Kirigami.Units.gridUnit * 50
+    // Flexible size
+    Layout.minimumWidth: Kirigami.Units.gridUnit * 24
+    Layout.minimumHeight: Kirigami.Units.gridUnit * 28
+    Layout.preferredWidth: Kirigami.Units.gridUnit * 26
+    Layout.preferredHeight: Kirigami.Units.gridUnit * 32
+    Layout.maximumWidth: Kirigami.Units.gridUnit * 32
+    Layout.maximumHeight: Kirigami.Units.gridUnit * 40
 
     // Reset layout editor when panel becomes visible
     Connections {
@@ -170,8 +170,16 @@ PlasmaExtras.Representation {
             PlasmaExtras.Heading {
                 level: 5
                 text: root.tr("Layout Preview")
-                Layout.fillWidth: true
             }
+
+            PlasmaComponents.Label {
+                text: "↕ " + root.tr("Expand for better view")
+                opacity: 0.6
+                font.pixelSize: Kirigami.Theme.smallFont.pixelSize
+                visible: layoutEditorLoader.height < Kirigami.Units.gridUnit * 8
+            }
+
+            Item { Layout.fillWidth: true }
 
             PlasmaComponents.Button {
                 icon.name: "dialog-ok-apply"
@@ -192,7 +200,6 @@ PlasmaExtras.Representation {
             id: layoutEditorLoader
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.minimumHeight: Kirigami.Units.gridUnit * 10
 
             sourceComponent: LayoutEditor {
                 anchors.fill: parent
@@ -401,10 +408,20 @@ PlasmaExtras.Representation {
 
                 Item { Layout.fillHeight: true }
 
-                PlasmaComponents.Button {
-                    text: root.tr("Close")
-                    Layout.alignment: Qt.AlignRight
-                    onClicked: configDialog.close()
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    PlasmaComponents.Label {
+                        text: "v1.0.1"
+                        opacity: 0.5
+                    }
+
+                    Item { Layout.fillWidth: true }
+
+                    PlasmaComponents.Button {
+                        text: root.tr("Close")
+                        onClicked: configDialog.close()
+                    }
                 }
             }
         }

@@ -614,8 +614,8 @@ Rectangle {
             x: isDragging ? dragX : workspacePadding + displayX * scaleFactor
             y: isDragging ? dragY : workspacePadding + displayY * scaleFactor
 
-            width: Math.max((monitorData.geometry.width || 1920) * scaleFactor, 60)
-            height: Math.max((monitorData.geometry.height || 1080) * scaleFactor, 40)
+            width: (monitorData.geometry.width || 1920) * scaleFactor
+            height: (monitorData.geometry.height || 1080) * scaleFactor
 
             color: monitorData.primary ? Kirigami.Theme.highlightColor : Kirigami.Theme.activeBackgroundColor
             border.color: isDragging ? Kirigami.Theme.focusColor : (hasChanges && pendingPositions[monitorData.name] ? Kirigami.Theme.neutralTextColor : Kirigami.Theme.textColor)
