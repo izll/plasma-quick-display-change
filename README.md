@@ -24,11 +24,15 @@ A KDE Plasma 6 widget for quick monitor configuration using kscreen-doctor.
 ## Installation
 
 ### From KDE Store
+[![KDE Store](https://img.shields.io/badge/KDE%20Store-Quick%20Display%20Change-blue)](https://store.kde.org/p/2331007/)
+
 1. Right-click on your panel
 2. Select "Add Widgets..."
 3. Click "Get New Widgets..." > "Download New Plasma Widgets..."
 4. Search for "Quick Display Change"
 5. Click Install
+
+Or download directly: https://store.kde.org/p/2331007/
 
 ### Manual Installation
 ```bash
@@ -37,8 +41,8 @@ kpackagetool6 -t Plasma/Applet -i quick-display-change.plasmoid
 
 ### From Source
 ```bash
-git clone <repository-url>
-cd quick-display-change-widget
+git clone https://github.com/izll/plasma-quick-display-change.git
+cd plasma-quick-display-change
 kpackagetool6 -t Plasma/Applet -i .
 ```
 
