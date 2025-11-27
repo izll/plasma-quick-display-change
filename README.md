@@ -2,15 +2,19 @@
 
 A KDE Plasma 6 widget for quick monitor configuration using kscreen-doctor.
 
+![Main Popup](screenshots/main-popup.png)
+
 ## Features
 
 - **Quick Monitor Toggle**: Enable/disable monitors with a single click
 - **Layout Presets**: Side by Side, Extend Right/Left, Stacked, Mirror, Primary Only
 - **Drag & Drop Layout Editor**: Visual positioning of monitors
 - **Monitor Identification**: Show monitor names on each display
+  ![Identify Overlay](screenshots/identify-overlay.png)
 - **Primary Display Selection**: Set any monitor as primary
 - **Multi-language Support**: 16 languages included
 - **Badge Counter**: Optional monitor count badge on panel icon
+  ![Panel Icon](screenshots/panel-icon.png)
 
 ## Requirements
 
@@ -52,6 +56,8 @@ Right-click on the widget and select "Configure..." to access:
 - **Language**: Choose from 16 languages or use system default
 - **Show monitor count badge**: Toggle the badge on the panel icon
 
+![Settings](screenshots/settings.png)
+
 ## Supported Languages
 
 - English, Magyar, Deutsch, Français, Español
@@ -81,8 +87,7 @@ quick-display-change-widget/
 │   └── icons/
 │       ├── monitors.svg          # Main widget icon
 │       └── monitor-single.svg    # Single monitor icon
-└── docs/
-    └── README.md                 # This file
+└── screenshots/                 # Preview images
 ```
 
 ## Technical Details
