@@ -1,0 +1,31 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "izll"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Quick monitor configuration widget for enabling/disabling displays and arranging layouts using kscreen-doctor. Supports multi-monitor setups with drag-and-drop positioning.",
+        "Description[hu]": "Gyors monitor konfigurációs widget monitorok be/kikapcsolásához és elrendezéshez kscreen-doctor használatával. Támogatja a több monitoros beállításokat drag-and-drop pozicionálással.",
+        "Description[de]": "Schnelles Monitor-Konfigurations-Widget zum Aktivieren/Deaktivieren von Bildschirmen und Anordnen von Layouts mit kscreen-doctor.",
+        "Description[fr]": "Widget de configuration rapide des moniteurs pour activer/désactiver les écrans et organiser les dispositions avec kscreen-doctor.",
+        "Description[es]": "Widget de configuración rápida de monitores para habilitar/deshabilitar pantallas y organizar diseños con kscreen-doctor.",
+        "EnabledByDefault": true,
+        "Icon": "video-display",
+        "Id": "org.kde.plasma.quickdisplaychange",
+        "License": "GPL-3.0-or-later",
+        "Name": "Quick Display Change",
+        "Name[hu]": "Gyors kijelző váltó",
+        "Name[de]": "Schnelle Anzeige-Umschaltung",
+        "Name[fr]": "Changement rapide d'écran",
+        "Name[es]": "Cambio rápido de pantalla",
+        "Version": "1.0.0",
+        "Website": "https://store.kde.org"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-Provides": [],
+    "X-Plasma-NotificationArea": "true",
+    "X-Plasma-NotificationAreaCategory": "Hardware"
+}

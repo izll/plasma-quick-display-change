@@ -1,0 +1,19 @@
+# IDE
+.idea/
+nbproject/
+*.iml
+
+# Build artifacts
+*.plasmoid
+
+# Claude Code local settings (not the docs)
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backup files
+*~
+*.bak
+*.swp
