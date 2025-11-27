@@ -249,6 +249,14 @@ Plasma 6 uses `org.kde.plasma.plasma5support`, but some systems may need fallbac
 
 ## Version History
 
+### 1.0.1 (2025-11-27)
+- Added version number display in settings dialog (bottom-left corner)
+- Added "Expand for better view" hint when Layout Preview area is too small
+- Removed minimum size constraints on monitor rectangles in Layout Editor
+- Adjusted popup Layout parameters for better responsiveness
+- Added KDE Store link to metadata.json Website field
+- Updated translations for new UI text (all 16 languages)
+
 ### 1.0.0 (2025-11-26)
 - Initial release
 - Multi-monitor detection and control

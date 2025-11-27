@@ -121,6 +121,13 @@ izll
 
 ## Version History
 
+### 1.0.1 (2025)
+- Added version number display in settings dialog
+- Added "Expand for better view" hint when Layout Preview is small
+- Improved monitor rectangle scaling in Layout Editor
+- Adjusted popup size for better responsiveness
+- Added KDE Store link to widget metadata
+
 ### 1.0.0 (2025)
 - Initial release
 - Multi-monitor support
