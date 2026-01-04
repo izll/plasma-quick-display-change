@@ -28,6 +28,39 @@ Rectangle {
     // Padding around the workspace - enough space to drag monitors above/below
     readonly property real workspacePadding: Kirigami.Units.gridUnit
 
+    // Calculate bounding box of all enabled monitors
+    readonly property var monitorBounds: {
+        let minX = Infinity, minY = Infinity;
+        let maxX = -Infinity, maxY = -Infinity;
+        let enabledCount = 0;
+
+        for (let m of monitors) {
+            if (m.enabled) {
+                enabledCount++;
+                let mx = pendingPositions[m.name] !== undefined ? pendingPositions[m.name].x : m.geometry.x;
+                let my = pendingPositions[m.name] !== undefined ? pendingPositions[m.name].y : m.geometry.y;
+                let mw = m.geometry.width || 1920;
+                let mh = m.geometry.height || 1080;
+
+                if (mx < minX) minX = mx;
+                if (my < minY) minY = my;
+                if (mx + mw > maxX) maxX = mx + mw;
+                if (my + mh > maxY) maxY = my + mh;
+            }
+        }
+
+        if (enabledCount === 0) {
+            return { minX: 0, minY: 0, width: 1920, height: 1080 };
+        }
+
+        return {
+            minX: minX,
+            minY: minY,
+            width: maxX - minX,
+            height: maxY - minY
+        };
+    }
+
     // Dynamic scale factor - calculate based on total monitor area and available space
     // Must allow for all monitors side-by-side OR stacked vertically
     readonly property real scaleFactor: {
@@ -73,6 +106,19 @@ Rectangle {
         let scale = Math.min(scaleX, scaleY);
 
         return scale;
+    }
+
+    // Offset to center the monitors in the available area
+    readonly property real centerOffsetX: {
+        let availableWidth = width - workspacePadding * 2;
+        let scaledWidth = monitorBounds.width * scaleFactor;
+        return (availableWidth - scaledWidth) / 2;
+    }
+
+    readonly property real centerOffsetY: {
+        let availableHeight = height - workspacePadding * 2;
+        let scaledHeight = monitorBounds.height * scaleFactor;
+        return (availableHeight - scaledHeight) / 2;
     }
 
     // Flag to prevent recursive resets
@@ -611,8 +657,9 @@ Rectangle {
 
             // Use binding for position - updates when scaleFactor or displayX/Y changes
             // During drag, use dragX/Y instead
-            x: isDragging ? dragX : workspacePadding + displayX * scaleFactor
-            y: isDragging ? dragY : workspacePadding + displayY * scaleFactor
+            // Center the monitors by subtracting minX/minY and adding centerOffset
+            x: isDragging ? dragX : workspacePadding + centerOffsetX + (displayX - monitorBounds.minX) * scaleFactor
+            y: isDragging ? dragY : workspacePadding + centerOffsetY + (displayY - monitorBounds.minY) * scaleFactor
 
             width: (monitorData.geometry.width || 1920) * scaleFactor
             height: (monitorData.geometry.height || 1080) * scaleFactor
@@ -697,8 +744,9 @@ Rectangle {
                     if (draggingMonitor !== monitorData.name) return;
 
                     // Calculate snapped position from current visual position
-                    let rawX = (dragX - workspacePadding) / scaleFactor;
-                    let rawY = (dragY - workspacePadding) / scaleFactor;
+                    // Account for centerOffset and minX/minY
+                    let rawX = (dragX - workspacePadding - centerOffsetX) / scaleFactor + monitorBounds.minX;
+                    let rawY = (dragY - workspacePadding - centerOffsetY) / scaleFactor + monitorBounds.minY;
                     let mw = monitorData.geometry.width || 1920;
                     let mh = monitorData.geometry.height || 1080;
 

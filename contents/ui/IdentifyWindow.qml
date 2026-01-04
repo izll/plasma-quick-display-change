@@ -4,89 +4,77 @@
 */
 
 import QtQuick
-import QtQuick.Window
+import QtQuick.Layouts
 import org.kde.kirigami 2.20 as Kirigami
+import org.kde.plasma.core as PlasmaCore
 
-Window {
-    id: identifyWindow
+PlasmaCore.Dialog {
+    id: identifyDialog
 
     property string monitorName: ""
     property string resolution: ""
-    property int monitorX: 0
-    property int monitorY: 0
-    property int monitorWidth: 1920
-    property int monitorHeight: 1080
+    property var targetScreen: null
 
-    width: 300
-    height: 150
+    type: PlasmaCore.Dialog.OnScreenDisplay
+    flags: Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.Tool | Qt.WindowDoesNotAcceptFocus
+    location: PlasmaCore.Types.Floating
+    hideOnWindowDeactivate: false
+    outputOnly: true
 
-    flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool
-    color: "transparent"
     visible: false
 
-    Component.onCompleted: {
-        // Find the screen that matches our monitor position
-        let targetScreen = null;
-        for (let i = 0; i < Qt.application.screens.length; i++) {
-            let s = Qt.application.screens[i];
-            if (s.virtualX === monitorX && s.virtualY === monitorY) {
-                targetScreen = s;
-                break;
+    mainItem: Rectangle {
+        width: 300
+        height: 150
+        radius: 10
+        color: Kirigami.Theme.backgroundColor
+        opacity: 0.95
+        border.color: Kirigami.Theme.highlightColor
+        border.width: 3
+
+        Column {
+            width: parent.width
+            anchors.centerIn: parent
+            spacing: 8
+
+            Text {
+                width: parent.width
+                text: identifyDialog.monitorName
+                font.pixelSize: 32
+                font.bold: true
+                color: Kirigami.Theme.textColor
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            Text {
+                width: parent.width
+                text: identifyDialog.resolution
+                font.pixelSize: 18
+                color: Kirigami.Theme.textColor
+                opacity: 0.8
+                horizontalAlignment: Text.AlignHCenter
             }
         }
 
-        if (targetScreen) {
-            identifyWindow.screen = targetScreen;
-            // Position relative to screen
-            identifyWindow.x = targetScreen.virtualX + Math.floor((targetScreen.width - width) / 2);
-            identifyWindow.y = targetScreen.virtualY + Math.floor((targetScreen.height - height) / 2);
-        } else {
-            // Fallback to provided coordinates
-            identifyWindow.x = monitorX + Math.floor((monitorWidth - width) / 2);
-            identifyWindow.y = monitorY + Math.floor((monitorHeight - height) / 2);
-        }
-
-        identifyWindow.visible = true;
-    }
-
-    Rectangle {
-        id: background
-        anchors.fill: parent
-        radius: 10
-        color: Kirigami.Theme.backgroundColor
-        opacity: 0.9
-        border.color: Kirigami.Theme.highlightColor
-        border.width: 3
-    }
-
-    Column {
-        width: parent.width
-        anchors.verticalCenter: parent.verticalCenter
-        spacing: 5
-
-        Text {
-            width: parent.width
-            text: monitorName
-            font.pixelSize: 32
-            font.bold: true
-            color: Kirigami.Theme.textColor
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
-            width: parent.width
-            text: resolution
-            font.pixelSize: 18
-            color: Kirigami.Theme.textColor
-            opacity: 0.8
-            horizontalAlignment: Text.AlignHCenter
+        // Auto close timer - must be inside mainItem
+        Timer {
+            id: closeTimer
+            interval: 3000
+            running: identifyDialog.visible
+            onTriggered: identifyDialog.visible = false
         }
     }
 
-    // Auto close after 3 seconds
-    Timer {
-        interval: 3000
-        running: true
-        onTriggered: identifyWindow.close()
+    function showOnScreen(screen) {
+        if (screen) {
+            targetScreen = screen;
+            // Calculate center position on the target screen
+            var centerX = screen.virtualX + Math.floor((screen.width - 300) / 2);
+            var centerY = screen.virtualY + Math.floor((screen.height - 150) / 2);
+
+            identifyDialog.x = centerX;
+            identifyDialog.y = centerY;
+            identifyDialog.visible = true;
+        }
     }
 }

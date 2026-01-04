@@ -249,6 +249,17 @@ Plasma 6 uses `org.kde.plasma.plasma5support`, but some systems may need fallbac
 
 ## Version History
 
+### 1.0.4 (2026-01-04)
+- Fixed Wayland compatibility for monitor identification overlay (PlasmaCore.Dialog instead of QtQuick.Window)
+- Identification text now appears centered on each monitor correctly under Wayland
+- Layout Preview now centers monitors horizontally and vertically
+- Added bounding box calculation for better monitor positioning in preview
+
+### 1.0.3 (2025-12-09)
+- Added resolution and refresh rate settings dialog per monitor (gear icon)
+- Added confirmation dialog with 15-second auto-revert timer when changing display mode
+- Added translations for new settings dialog strings (all 16 languages)
+
 ### 1.0.1 (2025-11-27)
 - Added version number display in settings dialog (bottom-left corner)
 - Added "Expand for better view" hint when Layout Preview area is too small

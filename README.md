@@ -121,6 +121,16 @@ izll
 
 ## Version History
 
+### 1.0.4 (2026)
+- Fixed Wayland compatibility for monitor identification overlay
+- Identification now appears centered on each monitor correctly under Wayland
+- Layout Preview centers monitors horizontally and vertically
+
+### 1.0.3 (2025)
+- Added resolution and refresh rate settings dialog per monitor
+- Added confirmation dialog with 15-second auto-revert timer when changing display mode
+- Added translations for new settings dialog (all 16 languages)
+
 ### 1.0.1 (2025)
 - Added version number display in settings dialog
 - Added "Expand for better view" hint when Layout Preview is small

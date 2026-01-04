@@ -21,7 +21,7 @@
         "Name[de]": "Schnelle Anzeige-Umschaltung",
         "Name[fr]": "Changement rapide d'écran",
         "Name[es]": "Cambio rápido de pantalla",
-        "Version": "1.0.1",
+        "Version": "1.0.4",
         "Website": "https://store.kde.org/p/2331007/"
     },
     "X-Plasma-API-Minimum-Version": "6.0",

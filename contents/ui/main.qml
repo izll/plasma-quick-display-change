@@ -128,7 +128,8 @@ PlasmoidItem {
                     primary: false,
                     geometry: { x: 0, y: 0, width: 0, height: 0 },
                     modes: [],
-                    currentMode: ""
+                    currentMode: "",
+                    rotation: "none"
                 };
             }
 
@@ -168,6 +169,19 @@ PlasmoidItem {
                     let modes = modesStr.match(/\d+:\d+x\d+@[\d.]+/g);
                     if (modes) {
                         currentMonitor.modes = modes;
+                    }
+                }
+
+                // Parse rotation: Rotation: 1 (1=none, 2=left, 4=inverted, 8=right)
+                let rotMatch = line.match(/Rotation:\s+(\d+)/);
+                if (rotMatch) {
+                    let rotVal = parseInt(rotMatch[1]);
+                    switch (rotVal) {
+                        case 1: currentMonitor.rotation = "none"; break;
+                        case 2: currentMonitor.rotation = "left"; break;
+                        case 4: currentMonitor.rotation = "inverted"; break;
+                        case 8: currentMonitor.rotation = "right"; break;
+                        default: currentMonitor.rotation = "none";
                     }
                 }
             }

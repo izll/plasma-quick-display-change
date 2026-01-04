@@ -149,12 +149,32 @@ PlasmaExtras.Representation {
             delegate: MonitorDelegate {
                 Layout.fillWidth: true
                 monitor: modelData
+                tr: root.tr
                 onToggleEnabled: function(monitorName, enabled) {
                     let cmd = enabled ? "enable" : "disable";
                     root.applyMonitorSettings(["output." + monitorName + "." + cmd]);
                 }
                 onSetPrimary: function(monitorName) {
                     root.applyMonitorSettings(["output." + monitorName + ".priority.1"]);
+                }
+                onSetMode: function(monitorName, modeId) {
+                    root.applyMonitorSettings(["output." + monitorName + ".mode." + modeId]);
+                }
+                onRequestSettingsChange: function(monitorName, modeId, originalModeId, rotation, originalRotation) {
+                    settingsConfirmDialog.monitorName = monitorName;
+                    settingsConfirmDialog.newModeId = modeId;
+                    settingsConfirmDialog.originalModeId = originalModeId;
+                    settingsConfirmDialog.newRotation = rotation;
+                    settingsConfirmDialog.originalRotation = originalRotation;
+
+                    // Apply both mode and rotation
+                    let commands = [];
+                    commands.push("output." + monitorName + ".mode." + modeId);
+                    if (rotation !== originalRotation) {
+                        commands.push("output." + monitorName + ".rotation." + rotation);
+                    }
+                    root.applyMonitorSettings(commands);
+                    settingsConfirmDialog.open();
                 }
             }
         }
@@ -293,30 +313,66 @@ PlasmaExtras.Representation {
         }
     }
 
-    property var identifyWindows: []
+    property var identifyDialogs: []
 
     function identifyMonitors() {
-        // Close any existing windows
-        for (let w of identifyWindows) {
-            if (w) w.destroy();
+        // Close any existing dialogs
+        for (let d of identifyDialogs) {
+            if (d) {
+                d.visible = false;
+                d.destroy();
+            }
         }
-        identifyWindows = [];
+        identifyDialogs = [];
 
-        // Create a window on each enabled monitor
+        // Create a dialog on each enabled monitor
         let enabledMonitors = root.monitors.filter(m => m.enabled);
 
         for (let m of enabledMonitors) {
+            // Find matching Qt screen
+            let targetScreen = null;
+            for (let i = 0; i < Qt.application.screens.length; i++) {
+                let s = Qt.application.screens[i];
+                // Match by position (virtualX, virtualY)
+                if (s.virtualX === m.geometry.x && s.virtualY === m.geometry.y) {
+                    targetScreen = s;
+                    break;
+                }
+            }
+
+            // Fallback: try to match by name
+            if (!targetScreen) {
+                for (let i = 0; i < Qt.application.screens.length; i++) {
+                    let s = Qt.application.screens[i];
+                    if (s.name === m.name || s.name.includes(m.name) || m.name.includes(s.name)) {
+                        targetScreen = s;
+                        break;
+                    }
+                }
+            }
+
+            // Final fallback: use screen by index
+            if (!targetScreen && enabledMonitors.indexOf(m) < Qt.application.screens.length) {
+                targetScreen = Qt.application.screens[enabledMonitors.indexOf(m)];
+            }
+
             let component = Qt.createComponent("IdentifyWindow.qml");
             if (component.status === Component.Ready) {
-                let window = component.createObject(fullRoot, {
+                let dialog = component.createObject(fullRoot, {
                     monitorName: m.name,
-                    resolution: m.geometry.width + "x" + m.geometry.height,
-                    monitorX: m.geometry.x,
-                    monitorY: m.geometry.y,
-                    monitorWidth: m.geometry.width || 1920,
-                    monitorHeight: m.geometry.height || 1080
+                    resolution: m.geometry.width + "x" + m.geometry.height
                 });
-                identifyWindows.push(window);
+                if (dialog) {
+                    if (targetScreen) {
+                        dialog.showOnScreen(targetScreen);
+                    } else {
+                        // Manual positioning fallback
+                        dialog.x = m.geometry.x + Math.floor((m.geometry.width - 300) / 2);
+                        dialog.y = m.geometry.y + Math.floor((m.geometry.height - 150) / 2);
+                        dialog.visible = true;
+                    }
+                    identifyDialogs.push(dialog);
+                }
             } else {
                 console.log("Error creating IdentifyWindow:", component.errorString());
             }
@@ -412,7 +468,7 @@ PlasmaExtras.Representation {
                     Layout.fillWidth: true
 
                     PlasmaComponents.Label {
-                        text: "v1.0.1"
+                        text: "v1.0.4"
                         opacity: 0.5
                     }
 
@@ -430,5 +486,103 @@ PlasmaExtras.Representation {
     // Function to open settings dialog (creates fresh instance)
     function openSettings() {
         configDialogLoader.active = true;
+    }
+
+    // Settings change confirmation dialog
+    QQC2.Popup {
+        id: settingsConfirmDialog
+        parent: fullRoot
+        anchors.centerIn: parent
+        width: Kirigami.Units.gridUnit * 18
+        height: Kirigami.Units.gridUnit * 10
+        modal: true
+        focus: true
+        closePolicy: QQC2.Popup.NoAutoClose  // Prevent closing by clicking outside
+
+        property string monitorName: ""
+        property string newModeId: ""
+        property string originalModeId: ""
+        property string newRotation: ""
+        property string originalRotation: ""
+
+        function revertSettings() {
+            let commands = [];
+            commands.push("output." + monitorName + ".mode." + originalModeId);
+            if (newRotation !== originalRotation) {
+                commands.push("output." + monitorName + ".rotation." + originalRotation);
+            }
+            root.applyMonitorSettings(commands);
+        }
+
+        onOpened: {
+            confirmTimer.secondsLeft = 15;
+            confirmTimer.running = true;
+        }
+
+        onClosed: {
+            confirmTimer.running = false;
+        }
+
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: Kirigami.Units.largeSpacing
+            spacing: Kirigami.Units.largeSpacing
+
+            Item { Layout.fillHeight: true }
+
+            PlasmaComponents.Label {
+                text: root.tr("Keep this display setting?")
+                font.bold: true
+                Layout.alignment: Qt.AlignHCenter
+            }
+
+            PlasmaComponents.Label {
+                text: root.tr("Reverting in %1 seconds...").replace("%1", confirmTimer.secondsLeft)
+                Layout.alignment: Qt.AlignHCenter
+                opacity: 0.7
+            }
+
+            Item { Layout.fillHeight: true }
+
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter
+                spacing: Kirigami.Units.largeSpacing
+
+                PlasmaComponents.Button {
+                    text: root.tr("Revert")
+                    onClicked: {
+                        confirmTimer.running = false;
+                        settingsConfirmDialog.revertSettings();
+                        settingsConfirmDialog.close();
+                    }
+                }
+
+                PlasmaComponents.Button {
+                    text: root.tr("Keep")
+                    highlighted: true
+                    onClicked: {
+                        confirmTimer.running = false;
+                        settingsConfirmDialog.close();
+                    }
+                }
+            }
+        }
+
+        Timer {
+            id: confirmTimer
+            interval: 1000
+            repeat: true
+            property int secondsLeft: 15
+
+            onTriggered: {
+                secondsLeft--;
+                if (secondsLeft <= 0) {
+                    running = false;
+                    settingsConfirmDialog.revertSettings();
+                    settingsConfirmDialog.close();
+                }
+            }
+        }
     }
 }
